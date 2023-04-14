@@ -21,7 +21,7 @@ const winningCombos = [
 
 /*** Data ***/
 
-const cellElements = document.querySelectorAll('[data-cell')
+const cellElements = document.querySelectorAll('[data-cell]')
 const boardElement = document.getElementById('board')
 const winningMessageElement = document.getElementById('winningMessage')
 const restartButton = document.getElementById('restartButton')
