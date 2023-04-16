@@ -5,23 +5,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-grid.min.css">
-    <script src="Week11.js"></script>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-grid.min.css"> 
+    <link rel="stylesheet" href="CSSWeek11.css">
 </head>
 <body>
-    <div class="board" id="board">
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-           <div class="cell" data-cell></div>
-       </div>
-       <div class="winning-message" id="winningMessage">
-           <div id="winningMessageText"></div>
-           <button id="restartButton">Restart</button>
-       </div>
-   </body>
+    <h1>Tic Tac Toe</h1>
+    <div id="board">
+        <div data-index="1" class="tile right-border bottom-border"></div>
+        <div data-index="2" class="tile right-border bottom-border"></div>
+        <div data-index="3" class="tile bottom-border"></div>
+        <div data-index="4" class="tile right-border bottom-border"></div>
+        <div data-index="5" class="tile right-border bottom-border"></div>
+        <div data-index="6" class="tile bottom-border"></div>
+        <div data-index="7" class="tile right-border"></div>
+        <div data-index="8" class="tile right-border "></div>
+        <div data-index="9" class="tile"></div>
+        <div></div>
+    </div>
+    <div id="gameOver" class="hidden">
+        <h2 id="gameOverText">Winner is X</h2>
+        <button id="playagain">Play Again?</button>
+    </div>
+
+    <script src="Week11.js"></script>
+ </body>
+ </html>

@@ -1,103 +1,125 @@
-//click the cell X/O appears depending on whose turn
-//a heading that states whose turn it is 
-//a restart button that clears grid
-//Bootstrap alert announcing the winner
 
-
-/*** Containers ***/
-
-const playerX = 'X'
-const playerO = 'O'
+const tiles = document.querySelectorAll(".tile");
+const playerX = "X";
+const playerO = "O";
+let turn = playerX
+const boardState = Array(tiles.length);
+boardState.fill(null);
 const winningCombos = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-]
+    //rows
+     { combo: [1, 2, 3]},
+     { combo: [4, 5, 6]},
+     { combo: [7, 8, 9]},
+     //colums
+     { combo: [1, 4, 7]},
+     { combo: [2, 5, 8]},
+     { combo: [3, 6, 9]},
+     //diagonal
+     { combo: [1, 5, 9]},
+     { combo: [3, 5, 7]},
+ ];
 
-/*** Data ***/
 
-const cellElements = document.querySelectorAll('[data-cell]')
-const boardElement = document.getElementById('board')
-const winningMessageElement = document.getElementById('winningMessage')
-const restartButton = document.getElementById('restartButton')
-const winnningMessageTextElement = document.getElementById('winningMessageText')
-let isPlayerOTurn = false
 
-/*** Render ***/
+//Elements
+const gameOver = document.getElementById("gameOver");
+const gameOverText = document.getElementById("gameOverText");
+const playAgain = document.getElementById("playagain");
+playAgain.addEventListener("click", startNewGame);
 
-startGame()
 
-restartButton.addEventListener('click', startGame)
 
-function startGame(){
-    isPlayerOTurn = false
-    cellElements.forEach(cell => {
-        cell.classList.remove(playerX)
-        cell.classList.remove(playerO)
-        cell.removeEventListener('click', handleCellClick)
-        cell.addEventListener('click', handleCellClick, {once:true})
-    })
-    setBoardHoeverClass()
-    winningMessageElement.classList.remove('show')
+function setHoverText(){
+    //remove hover text
+    tiles.forEach((tile) => {
+        tile.classList.remove("x-hover")
+        tile.classList.remove("o-hover")
+    });
+
+    const hoverClass = `${turn.toLowerCase()}-hover`;
+
+    tiles.forEach((tile) => {
+        if (tile.innerText == "") {
+            tile.classList.add(hoverClass);
+        }
+    });
 }
 
-function handleCellClick(e) {
-    const cell = e.target
-    const currentClass = isPlayerOTurn ? playerO : playerX
-    placeMark(cell, currentClass)
-    if (checkWin(currentClass)) {
-        endGame(false)
-    } else if (isDraw()) {
-        endGame(true)
-    } else {
-        swapTurns()
-        setBoardHoeverClass()
+//make the tiles clickable
+tiles.forEach((tile) => tile.addEventListener("click", tileClick));
+setHoverText();
+function tileClick(event){
+    if (gameOver.classList.contains("visible")) {
+        return;
+    }
+
+    const tile = event.target;
+    const tileNumber = tile.dataset.index;
+
+    if (tile.innerText != ""){
+        return;
+    }
+
+    if (turn === playerX){
+        tile.innerText = playerX;
+        boardState[tileNumber - 1] = playerX;
+        turn = playerO;
+        //console.log("X")
+    }
+
+    else {
+        tile.innerText = playerO;
+        boardState[tileNumber - 1] = playerO;
+        turn = playerX;
+        //console.log("O")
+        }
+    
+setHoverText();
+checkWinner();
+}
+
+//check for a winner
+function checkWinner(){
+    for(const winningCombo of winningCombos){
+        const combo = winningCombo.combo
+        const tileValue1 = boardState [combo[0] - 1];
+        const tileValue2 = boardState [combo[1] - 1];
+        const tileValue3 = boardState [combo[2] - 1];
+
+        if(tileValue1 != null && tileValue1 === tileValue2 && tileValue1 === tileValue3) {
+            gameOverAlert(tileValue1);
+            return;
+        }
+    }
+
+//check for a draw
+    const allTileFilledIn = boardState.every((tile) => tile !== null);
+    if (allTileFilledIn) {
+        gameOverAlert(null);
+        return;
     }
 }
 
-function endGame(draw) {
-    if (draw) {
-        winningMessageTextElement.innerText = "It's a tie!"
-    } else {
-        winnningMessageTextElement.innerText - `Player ${isPlayerOTurn ? "O's" : "X's"} wins!`
+//game over function
+function gameOverAlert(winnerText) {
+    let text = "It's a draw!";
+    if(winnerText != null) {
+        text = `Winner is ${winnerText}!`;
+        console.log('game over')
     }
-    winningMessageElement.classList.add('show')
+
+    gameOver.className = "visible";
+    gameOverText.innerText = text;
+
 }
 
-function isDraw() {
-    return [cellElements].every(cell => {
-        return cell.classList.contains(playerX) || cell.classList.contains(playerO)
-    })
+//function to start new game
+function startNewGame(){
+    gameOver.className = "hidden";
+    boardState.fill(null);
+    tiles.forEach((tile) => (tile.innerText = ""));
+    turn = playerX;
+    setHoverText();
 }
 
-function placeMark(cell, currentClass) {
-    cell.classList.add(currentClass)
-}
 
-function swapTurns() {
-    isPlayerOTurn = !isPlayerOTurn
-}
-
-function setBoardHoeverClass() {
-    boardElement.classList.remove(playerX)
-    boardElement.classList.remove(playerO)
-    if (isPlayerOTurn) {
-        boardElement.classList.add(playerO)
-    } else {
-        boardElement.classList.add(playerX)
-    }
-}
-
-function checkWin(currentClass) {
-    return winningCombos.some(combination => {
-        return combination.every(index => {
-            return cellElements[index].classList.contains(currentClass)
-        })
-    })
-}
-/*** Event Listeners ***/
